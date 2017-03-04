@@ -11,9 +11,9 @@ import Select from '../../components/Select';
 import InfoRow from '../../components/InfoRow';
 
 const optionsForTypeCars = [
-  {value: 1, label: 'Легковое место '},
-  {value: 2, label: 'Грузовое место'},
-  {value: 3, label: 'Инвалидное место'},
+  {value: 'standartSlot', label: 'Легковое место '},
+  {value: 'trackSlot', label: 'Грузовое место'},
+  {value: 'invalidSlot', label: 'Инвалидное место'},
 ]
 
 class HomePage extends Component {
@@ -106,7 +106,36 @@ class HomePage extends Component {
       },
     })
   }
+  toParking = () => {
+    const { selected, parking } = this.state;
+    /**
+     * not good but for first edition is well
+     */
+    const freeSlots = parking[selected.parking].freeSlots[selected.typeCar] - 1;
+    const busySlot = parking[selected.parking].busySlot[selected.typeCar] - 1;
+    const totalSlotF = parking[selected.parking].freeSlots.totalSlot - 1;
+    const totalSlotB = parking[selected.parking].busySlot.totalSlot - 1;
 
+    this.setState({
+      parking: {
+        ...parking,
+        [selected.parking]: {
+          ...parking[selected.parking],
+          freeSlots: {
+            ...parking[selected.parking].freeSlots,
+            [selected.typeCar]: freeSlots,
+            totalSlot: totalSlotF,
+          },
+          busySlot: {
+            ...parking[selected.parking].busySlot,
+            [selected.typeCar]: busySlot,
+            totalSlot: totalSlotB,
+          }
+        },
+
+      }
+    });
+  }
 
 
   render() {
@@ -162,7 +191,17 @@ class HomePage extends Component {
                         onChange={this.select('typeCar')}
                       />
                     </Col>
-                  </Row>
+                    {
+                      selected.typeCar &&
+                        <Col>
+                          <button
+                          disabled={!parking[selected.parking].freeSlots[selected.typeCar]}
+                          onClick={this.toParking} type="button">
+                            Припарковать авто
+                          </button>
+                        </Col>
+                    }
+                    </Row>
               }
 
           </Col>

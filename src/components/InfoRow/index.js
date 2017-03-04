@@ -4,13 +4,11 @@ import { Col, Label } from 'react-bootstrap';
 
 class InfoRow extends Component {
   static propTypes = {
-    md:          PropTypes.number,
     label:       PropTypes.string,
     value:       PropTypes.number,
   }
 
   static defaultProps = {
-    md: 6,
     label: '',
     value: ''
   }
