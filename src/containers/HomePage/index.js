@@ -26,7 +26,7 @@ class HomePage extends Component {
           standartSlot: 15,
           totalSlot:    30,
         },
-        disabledSlot:{
+        busySlot:{
           trackSlot:    0,
           invalidSlot:  0,
           standartSlot: 0,
@@ -40,7 +40,7 @@ class HomePage extends Component {
           standartSlot: 15,
           totalSlot:    30,
         },
-        disabledSlot: {
+        busySlot: {
           trackSlot:    0,
           invalidSlot:  0,
           standartSlot: 0,
@@ -54,6 +54,50 @@ class HomePage extends Component {
     }
   };
 
+  componentWillMount() {
+    window.parking = {
+      getFreeSlots: (nameOfParking) => {
+        const { parking } = this.state;
+        if (nameOfParking) {
+          return Object.keys(parking).indexOf(nameOfParking) !== -1 ?
+                  parking[nameOfParking].busySlots
+                : { erorrs: '404'};
+        } else {
+          return Object.keys(parking).reduce((p,c) => ({
+              trackSlot:    p.trackSlot + parking[c].freeSlots.trackSlot,
+              invalidSlot:  p.invalidSlot + parking[c].freeSlots.invalidSlot,
+              standartSlot: p.standartSlot + parking[c].freeSlots.standartSlot,
+              totalSlot:    p.totalSlot + parking[c].freeSlots.totalSlot,
+          }),{
+            trackSlot:    0,
+            invalidSlot:  0,
+            standartSlot: 0,
+            totalSlot:    0,
+          });
+        }
+      },
+      getBusySlots: (nameOfParking) => {
+        const { parking } = this.state;
+        if (nameOfParking) {
+          return Object.keys(parking).indexOf(nameOfParking) !== -1 ?
+                  parking[nameOfParking].busySlots
+                : { erorrs: '404'};
+        } else {
+          return Object.keys(parking).reduce((p,c) => ({
+              trackSlot:    p.trackSlot + parking[c].busySlot.trackSlot,
+              invalidSlot:  p.invalidSlot + parking[c].busySlot.invalidSlot,
+              standartSlot: p.standartSlot + parking[c].busySlot.standartSlot,
+              totalSlot:    p.totalSlot + parking[c].busySlot.totalSlot,
+          }),{
+            trackSlot:    0,
+            invalidSlot:  0,
+            standartSlot: 0,
+            totalSlot:    0,
+          });
+        }
+      },
+    }
+  }
   select = key => e => {
     this.setState({
       selected: {
@@ -62,6 +106,8 @@ class HomePage extends Component {
       },
     })
   }
+
+
 
   render() {
     console.log('this.state', this.state);
