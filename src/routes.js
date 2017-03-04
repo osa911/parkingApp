@@ -6,6 +6,5 @@ import HomePage from './containers/HomePage/index';
 export default (
   <Route path='/' component={App}>
     <IndexRoute component={HomePage} />
-
   </Route>
 );
