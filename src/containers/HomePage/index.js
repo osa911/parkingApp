@@ -11,9 +11,9 @@ import Select from '../../components/Select';
 import InfoRow from '../../components/InfoRow';
 
 const optionsForTypeCars = [
-  {value: 'standartSlot', label: 'Легковое место '},
-  {value: 'trackSlot', label: 'Грузовое место'},
-  {value: 'invalidSlot', label: 'Инвалидное место'},
+  {value: 'standartSlot', label: 'Легковое '},
+  {value: 'trackSlot', label: 'Грузовое'},
+  {value: 'invalidSlot', label: 'Инвалидное'},
 ]
 
 class HomePage extends Component {
@@ -132,13 +132,33 @@ class HomePage extends Component {
     const { selected, parking } = this.state;
     const freeParking = parking[selected.parking].freeSlots;
     const busyParking = parking[selected.parking].busySlot;
+    let typeCar = selected.typeCar;
     /**
      * not good but for first edition is well
      */
-    const freeSlots = freeParking[selected.typeCar] - 1;
-    const busySlot = busyParking[selected.typeCar] + 1;
-    const totalSlotF = freeParking.totalSlot - 1;
-    const totalSlotB = busyParking.totalSlot + 1;
+    let freeSlots = freeParking[selected.typeCar] - 1;
+    let busySlot = busyParking[selected.typeCar] + 1;
+    let totalSlotF = freeParking.totalSlot - 1;
+    let totalSlotB = busyParking.totalSlot + 1;
+
+    switch (typeCar) {
+      case 'invalidSlot':
+        // если инвалиды то доступны места инвалид + стандарт
+        freeSlots = freeSlots < 1 ? freeParking.standartSlot - 1 : freeSlots;
+        busySlot = busySlot > 10 ? busyParking.standartSlot + 1 : busySlot;
+        typeCar = freeSlots < 1 ? 'standartSlot' : typeCar ;
+        break;
+      case 'standartSlot':
+        // если легковушка то доступны места стандарт + грузовика
+
+        break;
+      case 'trackSlot':
+        // если грузовик то доступны места грузовика
+
+        break;
+      default:
+
+    }
 
     this.setState({
       parking: {
@@ -147,12 +167,12 @@ class HomePage extends Component {
           ...parking[selected.parking],
           freeSlots: {
             ...freeParking,
-            [selected.typeCar]: freeSlots,
+            [typeCar]: freeSlots,
             totalSlot: totalSlotF,
           },
           busySlot: {
             ...busyParking,
-            [selected.typeCar]: busySlot,
+            [typeCar]: busySlot,
             totalSlot: totalSlotB,
           }
         },
@@ -209,7 +229,7 @@ class HomePage extends Component {
                     <Col md={6}>
                       <h4> Припарковать авто на парковке {selected.parking.toUpperCase()} </h4>
                       <Select
-                        placeholder="Выбирите тип места"
+                        placeholder="Выбирите тип авто"
                         options={optionsForTypeCars}
                         value={selected.typeCar}
                         onChange={this.select('typeCar')}
@@ -219,7 +239,7 @@ class HomePage extends Component {
                       selected.typeCar &&
                         <Col>
                           <button
-                          disabled={!parking[selected.parking].freeSlots[selected.typeCar]}
+                          // disabled={!parking[selected.parking].freeSlots[selected.typeCar]}
                           onClick={this.toParking} type="button">
                             Припарковать авто
                           </button>
