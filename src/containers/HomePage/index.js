@@ -112,9 +112,9 @@ class HomePage extends Component {
      * not good but for first edition is well
      */
     const freeSlots = parking[selected.parking].freeSlots[selected.typeCar] - 1;
-    const busySlot = parking[selected.parking].busySlot[selected.typeCar] - 1;
+    const busySlot = parking[selected.parking].busySlot[selected.typeCar] + 1;
     const totalSlotF = parking[selected.parking].freeSlots.totalSlot - 1;
-    const totalSlotB = parking[selected.parking].busySlot.totalSlot - 1;
+    const totalSlotB = parking[selected.parking].busySlot.totalSlot + 1;
 
     this.setState({
       parking: {
