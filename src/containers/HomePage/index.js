@@ -10,6 +10,12 @@ import {
 import Select from '../../components/Select';
 import InfoRow from '../../components/InfoRow';
 
+const optionsForTypeCars = [
+  {value: 1, label: 'Легковое место '},
+  {value: 2, label: 'Грузовое место'},
+  {value: 3, label: 'Инвалидное место'},
+]
+
 class HomePage extends Component {
   state = {
     parking:{
@@ -42,53 +48,76 @@ class HomePage extends Component {
         },
       },
     },
-    selectedParking: '',
+    selected: {
+      parking: '',
+      typeCar: '',
+    }
   };
-  selectParking = e => {
+
+  select = key => e => {
     this.setState({
-      selectedParking: e.target.value,
+      selected: {
+        ...this.state.selected,
+        [key]: e.target.value,
+      },
     })
   }
+
   render() {
     console.log('this.state', this.state);
-    const { parking, selectedParking } = this.state;
-    const options = Object.keys(parking).map(i => ({ value: i, label: `Парковка ${i.toUpperCase()}`}))
+    const { parking, selected } = this.state;
+    const optionsForParking = Object.keys(parking).map(i => ({ value: i, label: `Парковка ${i.toUpperCase()}`}))
+
     return (
       <Grid>
           <Row className="show-grid">
             <Col md={12}>
-            <Row className="show-grid">
-              <Col md={6}>
-                <Select
-                  placeholder="Выбирите парковку"
-                  options={options}
-                  value={selectedParking}
-                  onChange={this.selectParking}
-                />
-              </Col>
-              {
-                selectedParking &&
-                  <Col md={4}>
-                    <InfoRow
-                      label="Всего вободных месте: &nbsp;"
-                      value={parking[selectedParking].freeSlots.totalSlot}
-                    />
-                    <InfoRow
-                      label="Для грузовиков: &nbsp;"
-                      value={parking[selectedParking].freeSlots.trackSlot}
-                    />
-                    <InfoRow
-                      label="Инвалидных мест: &nbsp;"
-                      value={parking[selectedParking].freeSlots.invalidSlot}
-                    />
-                    <InfoRow
-                      label="Для легковых авто: &nbsp;"
-                      value={parking[selectedParking].freeSlots.standartSlot}
-                    />
-                  </Col>
-              }
+              <Row className="show-grid">
+                <Col md={6}>
+                  <Select
+                    placeholder="Выбирите парковку"
+                    options={optionsForParking}
+                    value={selected.parking}
+                    onChange={this.select('parking')}
+                  />
+                </Col>
+                {
+                  selected.parking &&
+                    <Col md={4}>
+                      <InfoRow
+                        label="Всего вободных месте: &nbsp;"
+                        value={parking[selected.parking].freeSlots.totalSlot}
+                      />
+                      <InfoRow
+                        label="Для грузовиков: &nbsp;"
+                        value={parking[selected.parking].freeSlots.trackSlot}
+                      />
+                      <InfoRow
+                        label="Инвалидных мест: &nbsp;"
+                        value={parking[selected.parking].freeSlots.invalidSlot}
+                      />
+                      <InfoRow
+                        label="Для легковых авто: &nbsp;"
+                        value={parking[selected.parking].freeSlots.standartSlot}
+                      />
+                    </Col>
+                }
 
-            </Row>
+              </Row>
+              {
+                selected.parking &&
+                  <Row className="show-grid">
+                    <Col md={6}>
+                      <h4> Припарковать авто на парковке {selected.parking.toUpperCase()} </h4>
+                      <Select
+                        placeholder="Выбирите тип места"
+                        options={optionsForTypeCars}
+                        value={selected.typeCar}
+                        onChange={this.select('typeCar')}
+                      />
+                    </Col>
+                  </Row>
+              }
 
           </Col>
         </Row>
