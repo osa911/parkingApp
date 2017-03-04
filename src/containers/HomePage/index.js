@@ -96,6 +96,28 @@ class HomePage extends Component {
           });
         }
       },
+      getParkingStatus: () => {
+        const { parking } = this.state;
+        return Object.keys(parking).reduce((p,c) => ({
+            trackSlotFree:    p.trackSlotFree + parking[c].freeSlots.trackSlot,
+            invalidSlotFree:  p.invalidSlotFree + parking[c].freeSlots.invalidSlot,
+            standartSlotFree: p.standartSlotFree + parking[c].freeSlots.standartSlot,
+            totalSlotFree:    p.totalSlotFree + parking[c].freeSlots.totalSlot,
+            trackSlotBusy:    p.trackSlotBusy + parking[c].busySlot.trackSlot,
+            invalidSlotBusy:  p.invalidSlotBusy + parking[c].busySlot.invalidSlot,
+            standartSlotBusy: p.standartSlotBusy + parking[c].busySlot.standartSlot,
+            totalSlotBusy:    p.totalSlotBusy + parking[c].busySlot.totalSlot,
+        }),{
+          trackSlotFree:    0,
+          invalidSlotFree:  0,
+          standartSlotFree: 0,
+          totalSlotFree:    0,
+          trackSlotBusy:    0,
+          invalidSlotBusy:  0,
+          standartSlotBusy: 0,
+          totalSlotBusy:    0,
+        });
+      },
     }
   }
   select = key => e => {
@@ -108,13 +130,15 @@ class HomePage extends Component {
   }
   toParking = () => {
     const { selected, parking } = this.state;
+    const freeParking = parking[selected.parking].freeSlots;
+    const busyParking = parking[selected.parking].busySlot;
     /**
      * not good but for first edition is well
      */
-    const freeSlots = parking[selected.parking].freeSlots[selected.typeCar] - 1;
-    const busySlot = parking[selected.parking].busySlot[selected.typeCar] + 1;
-    const totalSlotF = parking[selected.parking].freeSlots.totalSlot - 1;
-    const totalSlotB = parking[selected.parking].busySlot.totalSlot + 1;
+    const freeSlots = freeParking[selected.typeCar] - 1;
+    const busySlot = busyParking[selected.typeCar] + 1;
+    const totalSlotF = freeParking.totalSlot - 1;
+    const totalSlotB = busyParking.totalSlot + 1;
 
     this.setState({
       parking: {
@@ -122,12 +146,12 @@ class HomePage extends Component {
         [selected.parking]: {
           ...parking[selected.parking],
           freeSlots: {
-            ...parking[selected.parking].freeSlots,
+            ...freeParking,
             [selected.typeCar]: freeSlots,
             totalSlot: totalSlotF,
           },
           busySlot: {
-            ...parking[selected.parking].busySlot,
+            ...busyParking,
             [selected.typeCar]: busySlot,
             totalSlot: totalSlotB,
           }
